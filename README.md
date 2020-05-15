@@ -1,25 +1,29 @@
-# dockerlab
-Docker lab 101
-IBM Hybrid Cloud Workshop
+# IBM Kuberneteando sobre IBM Cloud Workshop
 ---
-# Docker Labs
+# Kuberneteando 2 Docker Hands On
 ---
 
 ![img](images/docker.png)
 
 Duration : 30 minutes
 
+## Overview
+
+In this lab, you will run your first Docker container.
+
+Containers are just a process (or a group of processes) running in isolation. Isolation is achieved via linux namespaces and control groups. One thing to note, is that linux namespaces and control groups are features that are built into the linux kernel! Other than the linux kernel itself, there is nothing special about containers.
+
+What makes containers useful is the tooling that surrounds it. For these labs, we will be using Docker, which has been the de facto standard tool for using containers to build applications. Docker provides developers and operators with a friendly interface to build, ship and run containers on any environment.
+
+In this lab, we will run our first container, and learn how to inspect it. We will be able to witness the namespace isolation that we acquire from the linux kernel.
+
+After we run our first container, we will dive into other uses of docker containers. We will find many examples of these on the Docker Store, and we will run several different types of containers on the same host. This will allow us to see the benefit of isolation- where we can run multiple containers on the same host without conflicts.
+
+We will be using a few Docker commands in this lab. For full documentation on available commands check out the [official documentation](https://docs.docker.com/).
+
 ## Prerequisites
-This set of instructions requires that docker is already installed and docker commands can be run from a bash shell or a command line. You can get more information at the [Docker website](https://www.docker.com/get-docker)
-
-**Note:** 
-
-> This lab assumes that you have a Linux VM provided by the instructor. To get access to that provided VM (where ip address and root password are provided by the instructor):
-
-`ssh root@ipaddress`
-
-Or you can also use your own Docker running on your laptop with a recent version. 
-
+This set of instructions requires that docker is already installed and docker commands can be run from a bash shell or a command line. You can get more information at the [Docker website](https://www.docker.com/get-docker).
+Alternatively, you can use [Play with Docker](http://play-with-docker.com).
 
 
 ## Task 1 - Working with Docker
@@ -174,34 +178,28 @@ This image is a typical image to get started with Docker. When an image is run i
 
 The running image is called a **container**. Let us run a more typical image; This image contains the noSQL database **couchDB**. As there is no image containing couchDB on your laptop, you will first pull it from the Docker Hub and then once all the layers have been downloaded and extracted, you will run it.
 
-`docker run -d couchdb`
+`docker run -d redis`
 
 Output:
 
 ```bash
-# docker run -d couchdb
-Unable to find image 'couchdb:latest' locally
-latest: Pulling from library/couchdb
-5e6ec7f28fb7: Downloading [===========================>                       ]  12.17MB/22.5MB
-70113ec2139e: Download complete 
-80648cf0a24a: Download complete 
-e0794329addc: Download complete 
-6d60e1d083fc: Download complete 
-708127226509: Download complete 
-4eddfd85791c: Downloading [==========>                                        ]  11.24MB/54.15MB
-90beac1647b7: Download complete 
-838fd0abf15f: Download complete 
-c7df822199b0: Download complete 
-ca2c2d17695c: Download complete 
-dbb7188da17c: Download complete 
+# docker run -d redis
+Unable to find image 'redis:latest' locally
+latest: Pulling from library/redis
+54fec2fa59d0: Pull complete 
+9c94e11103d9: Pull complete 
+04ab1bfc453f: Pull complete 
+a22fde870392: Pull complete 
+def16cac9f02: Pull complete 
+1604f5999542: Pull complete 
 ```
 
- The output above was captured while the image was still downloading from docker-hub. When the download is complete,  you don't see anything from the container, like with hello-world. Instead you see a long hex id like `272d409a806c485cfe83727f895093ee2fcd586a6cf98455e6216c9fc95af24d`. **This is the long id of the container**.
+ The output above was captured while the image was still downloading from docker-hub. When the download is complete,  you don't see anything from the container, like with hello-world. Instead you see a long hex id like `c610107837e8d0785a05fb22f1bcc16b21ce9b0d4ee96e82a28267676e4a6c27`. **This is the long id of the container**.
 
 ```bash
-Digest: sha256:7f3e6372ff8a87f1a11c63a787ec7dceda85a8fe80005d6c5bbdfa6a6bcde73e
-Status: Downloaded newer image for couchdb:latest
-272d409a806c485cfe83727f895093ee2fcd586a6cf98455e6216c9fc95af24d
+Digest: sha256:399a9b17b8522e24fbe2fd3b42474d4bb668d3994153c4b5d38c3dafd5903e32
+Status: Downloaded newer image for redis:latest
+c610107837e8d0785a05fb22f1bcc16b21ce9b0d4ee96e82a28267676e4a6c27
 ```
 
 Also notice that the -d in the run command with launch the container as **detached** and so you can get the prompt when the command has been completed.
@@ -212,78 +210,78 @@ Also notice that the -d in the run command with launch the container as **detach
 
 Notice only the first part of that long hex id is displayed. Typically this is more than enough to uniquely identify that container. `docker ps` provides information about when the container was created, how long it has been running, then name of the image as well as the name of the container. Note that each container must have a unique name. You can specify a name for each container as long as it is unique.
 
-`docker ps | grep couchdb` 
+`docker ps | grep redis` 
 
 Output:
 
 ```bash
-# docker ps               
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                          NAMES
-272d409a806c        couchdb             "tini -- /docker-ent…"   3 minutes ago       Up 3 minutes        4369/tcp, 5984/tcp, 9100/tcp   xenodochial_heisenberg
+# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+c610107837e8        redis               "docker-entrypoint.s…"   9 minutes ago       Up 9 minutes        6379/tcp            modest_hugle
 ```
 
-You will notice that the name is auto-generated by Docker:  **xenodochial_heisenberg**. So to avoid this, a good practice is to always give a name to a container with the **--name** parameter.
+You will notice that the name is auto-generated by Docker:  **modest_hugle**. So to avoid this, a good practice is to always give a name to a container with the **--name** parameter.
 
 
 
 
 ### 8. An image can be run multiple times 
 
-Launch another container for the couchdb image.
+Launch another container for the redis image with a given name.
 
-`docker run -d couchdb`
+`docker run --name redis2 -d redis`
 Output:
 
 ```bash
-# docker run -d couchdb
-fd511f9cd8965395bfcb652d6a10b5eec5c0b4479950064d7e238420c8099a6b
+# docker run --name redis2 -d redis
+b07714e7b548dbb0d3911bb6a18c85f6e1043a34978aa60e1b7fb34d6439d9a1
 ```
 
 Did you notice how quickly the second instance started? There was no need to download the image this time. The id of the container is show after is has started. You can notice that we are reusing all the layers already downloaded when we first pull the image.
 
 
 
-### 9. Two couchDB containers  
+### 9. Two redis containers  
 
-`docker ps | grep couchdb`
+`docker ps | grep redis`
 
 Outpout:
 
-```bash
-# docker ps
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                          NAMES
-fd511f9cd896        couchdb             "tini -- /docker-ent…"   4 minutes ago       Up 4 minutes        4369/tcp, 5984/tcp, 9100/tcp   cocky_jones
-272d409a806c        couchdb             "tini -- /docker-ent…"   13 minutes ago      Up 13 minutes       4369/tcp, 5984/tcp, 9100/tcp   xenodochial_heisenberg
+```docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS               NAMES
+b07714e7b548        redis               "docker-entrypoint.s…"   About a minute ago   Up About a minute   6379/tcp            redis2
+c610107837e8        redis               "docker-entrypoint.s…"   13 minutes ago       Up 13 minutes       6379/tcp            modest_hugle
 ```
 
 
 
 
-### 10. Similar couchDB instances 
+### 10. Similar redis instances 
 
 The containers look similar, but they have unique names and unique ids. 
 
 Stop the most recent container and then check to see what's running.
 
-`docker stop fd511f9cd896 `
+`docker stop c610107837e8 `
 
 Output:
 
 ```bash
-# docker stop fd511f9cd896
-fd511f9cd896
+# docker stop c610107837e8
+c610107837e8
 ```
 
-Then check the container list:
+Then check the container list. `-a` show all containers (default shows just running):
 
-`docker ps | grep couchdb`or `docker ps`
+`docker ps -a
 
 Output:
 
 ```bash
-# docker ps
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                          NAMES
-272d409a806c        couchdb             "tini -- /docker-ent…"   19 minutes ago      Up 19 minutes       4369/tcp, 5984/tcp, 9100/tcp   xenodochial_heisenberg
+# docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                     PORTS               NAMES
+b07714e7b548        redis               "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes               6379/tcp            redis2
+c610107837e8        redis               "docker-entrypoint.s…"   17 minutes ago      Exited (0) 2 minutes ago                       modest_hugle
 ```
 
 So we still have one running container.
@@ -295,9 +293,9 @@ So we still have one running container.
 
 Stop the other container and see what is running.
 
- `docker stop 272d409a806c`
+ `docker stop b07714e7b548`
 
- `docker ps | grep couchdb` or `docker ps`
+ `docker ps | grep redis` or `docker ps`
 
 Output:
 
@@ -321,25 +319,25 @@ Output:
 ```bash
 # docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-couchdb             latest              3bfb066ff4c5        19 hours ago        205MB
+redis               latest              f9b990972689        13 days ago         104MB
 hello-world         latest              fce289e99eb9        3 weeks ago         1.84kB
 ```
 
->  You can filter the images by they names : `docker images couchdb`   
+>  You can filter the images by they names : `docker images redis`   
 
   
 
-### 13. Now remove the couchDB image 
+### 13. Now remove the redis image 
 
 Go ahead and delete the couchDB image and double check that it is gone.
 
-` docker rmi couchdb`
+` docker rmi redis`
 
 Output:
 
 ```bash
 # docker rmi couchdb
-Error response from daemon: conflict: unable to remove repository reference "couchdb" (must force) - container 272d409a806c is using its referenced image 3bfb066ff4c5
+Error response from daemon: conflict: unable to remove repository reference "couchdb" (must force) - container 272d409a806c is using its referenced image f9b990972689
 
 ```
 
@@ -349,19 +347,19 @@ Apparently some stopped containers are still using this images and you can see t
 
 ### 14. Oops, it is not working
 
-We can't delete that image until we delete the "couchdb" containers (running or not).
+We can't delete that image until we delete the "redis" containers (running or not).
 
-> Note the `docker ps -a` will show us all the containers, not just the ones that are running but also the ones that stopped.
+> Remember that the `docker ps -a` will show us all the containers, not just the ones that are running but also the ones that stopped.
 You will noticed that all containers that you are listing have been stopped. 
 
-`docker ps -a | grep couchdb`
+`docker ps -a | grep redis`
 
 Output:
 
 ```bash
-# docker ps -a | grep couchdb
-fd511f9cd896        couchdb             "tini -- /docker-ent…"   21 minutes ago      Exited (0) 11 minutes ago                       cocky_jones
-272d409a806c        couchdb             "tini -- /docker-ent…"   29 minutes ago      Exited (0) 7 minutes ago                        xenodochial_heisenberg
+# docker ps -a | grep redis
+b07714e7b548        redis               "docker-entrypoint.s…"   17 minutes ago      Exited (0) 11 minutes ago                       redis2
+c610107837e8        redis               "docker-entrypoint.s…"   29 minutes ago      Exited (0) 14 minutes ago                       modest_hugle
 
 ```
 
@@ -371,43 +369,38 @@ fd511f9cd896        couchdb             "tini -- /docker-ent…"   21 minutes ag
 
 Delete the stopped couchdb containers, delete the couchdb image, and make sure it is gone. You can leave hello-world.
 
-`docker rm fd511f9cd896 272d409a806c `
+`docker rm b07714e7b548 c610107837e8 `
 Output:
 
 ```bash
-# docker rm fd511f9cd896 272d409a806c
-fd511f9cd896
-272d409a806c
+# docker rm fdocker rm b07 c61
+b07
+c61
+
 ```
 
 And use the rmi subcommand to remove the image:
 
- `docker rmi couchdb`
+ `docker rmi redis`
 
 Output:
 
 ```bash
-# docker rmi couchdb
-Untagged: couchdb:latest
-Untagged: couchdb@sha256:7f3e6372ff8a87f1a11c63a787ec7dceda85a8fe80005d6c5bbdfa6a6bcde73e
-Deleted: sha256:3bfb066ff4c595317efd3dc672a98b3defce21427947ecb9288ffec6c7040c2b
-Deleted: sha256:24efa375156ab1fe149fd095d21323680c4530f0f64989969d7997d0a32cebc2
-Deleted: sha256:50840db451c21948e918cf3c2db0a89c4ed76f729a8cac419d1e0d745e739fda
-Deleted: sha256:c272e617d5eed77d55fd7073a4c4200d50bf18ea5e35243cbc0ec7745912d065
-Deleted: sha256:f74e6db8d559ada1ff9b71c757b241e429fbc150a8a3f7e007900846ff10c248
-Deleted: sha256:0b9811c169c2edddf0e191a8da18786c781aa24d3ca4d4462fe5dbf345a5f656
-Deleted: sha256:59cd6ba3a99fdece33f78b17ae7d908f684613d6be1a5429dc4290741f578269
-Deleted: sha256:c474aa358b6a6d72574df65d49cc69fec3dd49679c462d0a3d0fc97c4c047b6e
-Deleted: sha256:50f770ebecbd64387b54a687174e0c49097ca322b273d210ebea2635ce617552
-Deleted: sha256:364bb10db37ea4450918268f69022d61d2fc650c4866b8c5847da29c6602e8ba
-Deleted: sha256:a73e1b77a9ebbb952dc8a70fea3a3acfec7a87169ca8ce2f8255c9705994e8d1
-Deleted: sha256:b7d374e01be227502917dab0d981f6018e29519f966bc94d7e70fd5f89850aa5
-Deleted: sha256:3c816b4ead84066ec2cadec2b943993aaacc3fe35fcd77ada3d09dc4f3937313
+# docker rmi redis
+Untagged: redis:latest
+Untagged: redis@sha256:399a9b17b8522e24fbe2fd3b42474d4bb668d3994153c4b5d38c3dafd5903e32
+Deleted: sha256:f9b9909726890b00d2098081642edf32e5211b7ab53563929a47f250bcdc1d7c
+Deleted: sha256:7bd7286c61dee81eb691f022d070202ba2840574c460f6dcbc21792f8bf22a7f
+Deleted: sha256:ba618723adf8eb28ec3d2b2003442599e3f947b4d66875b80dc6582c61f89a27
+Deleted: sha256:cd3c331f934414f0d7a2a3ceb80935a54252dba553f1c1ee823961a07e8d1957
+Deleted: sha256:09f9b5d7722b181ae2acd61396c20549afdea66ee31f921850191db5afe6738a
+Deleted: sha256:3bd2921d0d3dd52dbcdc462f35b11cb89df901205284b0fea03c19bb8359907a
+Deleted: sha256:c2adabaecedbda0af72b153c6499a0555f3a769d52370469d8f6bd6328af9b13
 ```
 
 Notice that all the layers in the image have been gone.  
 
-`docker ps -a | grep couchdb`
+`docker ps -a | grep redis`
 
 ***Note:*** Docker images and containers can be referenced by **name** or by **id**. 
 
@@ -723,3 +716,6 @@ Congratulations, you have successfully completed this Containers lab !  You've j
 
 ---
 # End of the lab
+---
+# IBM Hybrid Cloud Workshop
+---
