@@ -242,7 +242,7 @@ Did you notice how quickly the second instance started? There was no need to dow
 
 `docker ps | grep redis`
 
-Outpout:
+Output:
 
 ```docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS               NAMES
@@ -270,7 +270,7 @@ c610107837e8
 
 Then check the container list. `-a` show all containers (default shows just running):
 
-`docker ps -a
+`docker ps -a`
 
 Output:
 
@@ -320,7 +320,7 @@ redis               latest              f9b990972689        13 days ago         
 hello-world         latest              fce289e99eb9        3 weeks ago         1.84kB
 ```
 
->  You can filter the images by they names : `docker images redis`   
+You can filter the images by they names : `docker images redis`   
 
   
 
@@ -402,13 +402,14 @@ Notice that all the layers in the image have been gone.
 ***Note:*** Docker images and containers can be referenced by **name** or by **id**. 
 
 
-
 ## 2. Task 2 - Running a web server
 
 
 Let's run a container using the [official Nginx image](https://store.docker.com/images/nginx) from the Docker Store.
 
 `docker container run --detach --publish 8080:80 --name nginx nginx`
+
+Output:
 
 ```sh
 $ docker container run --detach --publish 8080:80 --name nginx nginx
@@ -422,23 +423,21 @@ Status: Downloaded newer image for nginx:latest
 5e1bf0e6b926bd73a66f98b3cbe23d04189c16a43d55dd46b8486359f6fdf048
 ```
 
-    We are using a couple of new flags here. The `--detach` flag will run this container in the background. The `publish` flag publishes port 80 in the container (the default port for nginx), via port 8080 on our host. Remember that the NET namespace gives processes of the container their own network stack. The `--publish` flag is a feature that allows us to expose networking through the container onto the host.
+We are using a couple of new flags here. The `--detach` flag will run this container in the background. The `publish` flag publishes port 80 in the container (the default port for nginx), via port 8080 on our host. Remember that the NET namespace gives processes of the container their own network stack. The `--publish` flag is a feature that allows us to expose networking through the container onto the host.
 
-    How do you know port 80 is the default port for nginx? Because it is listed in the [documentation](https://store.docker.com/images/nginx) on the Docker Store. In general, the documentation for the verified images is very good, and you will want to refer to them when running containers using those images.
+How do you know port 80 is the default port for nginx? Because it is listed in the [documentation](https://store.docker.com/images/nginx) on the Docker Store. In general, the documentation for the verified images is very good, and you will want to refer to them when running containers using those images.
 
-    We are also specifying the `--name` flag, which names the container. 
+We are also specifying the `--name` flag, which names the container. 
 
-    Since this is the first time you are running the nginx container, it will pull down the nginx image from the Docker Store. Subsequent containers created from the Nginx image will use the existing image located on your host.
+Since this is the first time you are running the nginx container, it will pull down the nginx image from the Docker Store. Subsequent containers created from the Nginx image will use the existing image located on your host.
 
-    Nginx is a lightweight web server. You can access it on port 8080 on your localhost.
+Nginx is a lightweight web server. You can access it on port 8080 on your localhost.
 
 Access the nginx server on [localhost:8080](http://localhost:8080). If you are using play-with-docker, look for the `8080` link near the top of the page.
 
 ![Launching the web server](./images/nginx2.png)
 
 ## Task 3 - Troubleshooting containers
-
-###1. Troubleshooting containers  
 
 To troubleshoot your container or your application, you may want to go inside the container to look at some logs or to see the processes.
 
@@ -463,7 +462,6 @@ PID   USER     TIME  COMMAND
     8 root      0:00 ps -ef
 ```
 
-
 Don't forget to **exit** from the container:
 
 `# exit`
@@ -471,8 +469,6 @@ Don't forget to **exit** from the container:
 For comparison, run `ps -ef` or `top` on the host. These commands will work on linux or mac. For windows, you can inspect the running processes using `tasklist`.
 
     ```sh
-    root@cc88b7536a57:/# exit
-    exit
     $ ps -ef
     # Lots of processes!
     ```
@@ -484,11 +480,11 @@ For comparison, run `ps -ef` or `top` on the host. These commands will work on l
     - User - Isolated view of users on the system
     - UTC - Set hostname and domain name per container
 
-    These namespaces together provide the isolation for containers that allow them to run together securely and without conflict with other containers running on the same system. Next we will demonstrate different uses of containers. and the benefit of isolation as we run multiple containers on the same host.
+   These namespaces together provide the isolation for containers that allow them to run together securely and without conflict with other containers running on the same system. Next we will demonstrate different uses of containers. and the benefit of isolation as we run multiple containers on the same host.
 
-    **Note**: Namespaces are a feature of the **linux** kernel. But Docker allows you to run containers on Windows and Mac... how does that work? The secret is that embedded in the Docker product is a linux subsystem. Docker open-sourced this linux subsystem to a new project: [LinuxKit](https://github.com/linuxkit/linuxkit). Being able to run containers on many different platforms is one advantage of using the Docker tooling with containers.
+   **Note**: Namespaces are a feature of the **linux** kernel. But Docker allows you to run containers on Windows and Mac... how does that work? The secret is that embedded in the Docker product is a linux subsystem. Docker open-sourced this linux subsystem to a new project: [LinuxKit](https://github.com/linuxkit/linuxkit). Being able to run containers on many different platforms is one advantage of using the Docker tooling with containers.
 
-    In additional to running linux containers on Windows using a linux subsystem, native Windows containers are now possible due the creation of container primitives on the Windows OS. Native Windows containers can be run on Windows 10 or Windows Server 2016 or newer.
+   In additional to running linux containers on Windows using a linux subsystem, native Windows containers are now possible due the creation of container primitives on the Windows OS. Native Windows containers can be run on Windows 10 or Windows Server 2016 or newer.
 
 
 ## Task 4 - Building Docker Images
@@ -752,7 +748,7 @@ The "hola Kuberneteadores!" application is overrated, let's update the app so th
         app.run(host="0.0.0.0")' > app.py
     ```
 
-1. Rebuild and push your image
+2. Rebuild and push your image
 
     Now that your app is updated, you need repeat the steps above to rebuild your app and push it to the IBM Cloud registry.
 
@@ -792,7 +788,9 @@ There is a caching mechanism in place for pushing layers too. IBM Cloud registry
 
 When you change a layer, every layer built on top of that will have to be rebuilt. Each line in a Dockerfile builds a new layer that is built on the layer created from the lines before it. This is why the order of the lines in our Dockerfile is important. We optimized our Dockerfile so that the layer that is most likely to change (`COPY app.py /app.py`) is the last line of the Dockerfile. Generally for an application, your code changes at the most frequent rate. This optimization is particularly important for CI/CD processes, where you want your automation to run as fast as possible.
 
-Finally, run a new container from the new version of the image. We will use now '5002' as port to see the changes.
+3. Run a new container from the new version of the image. 
+
+We will use now '5002' as port to see the changes.
 
 ```sh $docker run -p 5002:5000 -d registry.ng.bluemix.net/lureyit/python-hello:2
 Unable to find image 'registry.ng.bluemix.net/lureyit/python-hello:2' locally
@@ -814,7 +812,7 @@ e848ba07dfd0ff67c77d295b276e948cd3b19a12204e42e8e3863e2b56893539
 ```
 Navigate to [localhost:5002](http://localhost:5002) in a browser to see the results.
 
-    In play-with-docker, click the link `5002` that should appear near the top of your session. If all else fails: `curl localhost:5002` works...
+In play-with-docker, click the link `5002` that should appear near the top of your session. If all else fails: `curl localhost:5002` works...
 
 You should see "hola Kuberneteadores de la sesion 2!" on your browser.
     
@@ -892,7 +890,8 @@ Each line represents a layer of the image. You'll notice that the top lines matc
 
 ## Conclusion
 
-Congratulations, you have successfully completed this Containers lab !  You've just build and run your first Docker-based web app !  In this lab, you learned how to build and run images on docker on your laptop.
+Congratulations, you have successfully completed this Containers lab !  You've just build and run your first Docker-based web app!  
+In this lab, you learned how to build and run images on docker on your laptop.
 
 ---
 # End of the lab
