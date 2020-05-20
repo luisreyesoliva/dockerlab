@@ -244,7 +244,8 @@ Did you notice how quickly the second instance started? There was no need to dow
 
 Output:
 
-```docker ps
+```bash 
+# docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS               NAMES
 b07714e7b548        redis               "docker-entrypoint.s…"   About a minute ago   Up About a minute   6379/tcp            redis2
 c610107837e8        redis               "docker-entrypoint.s…"   13 minutes ago       Up 13 minutes       6379/tcp            modest_hugle
@@ -414,8 +415,8 @@ Let's run a container using the [official Nginx image](https://store.docker.com/
 
 Output:
 
-```sh
-$ docker container run --detach --publish 8080:80 --name nginx nginx
+```bash
+# docker container run --detach --publish 8080:80 --name nginx nginx
 Unable to find image 'nginx:latest' locally
 latest: Pulling from library/nginx
 36a46ebd5019: Pull complete
@@ -527,7 +528,7 @@ If you don't have python install locally, don't worry! Because you don't need it
 
 1. Create a `Dockerfile` but running the following command. (copy-paste the entire code block)
 
-    ```sh
+    ```bash
     echo 'FROM python:3.8
     RUN pip install flask
     CMD ["python","app.py"]
@@ -567,7 +568,7 @@ If you don't have python install locally, don't worry! Because you don't need it
     Pass in `-t` to name your image `python-hello`.
     
 ```bash
-$ docker image build -t python-hello .
+# docker image build -t python-hello .
 Sending build context to Docker daemon  3.072kB
 Step 1/4 : FROM python:3.8
 3.8: Pulling from library/python
@@ -612,8 +613,8 @@ Successfully tagged python-hello:latest
 ```
 Verify that your image shows up in your image list via `docker images`.
 
-```sh
-$ docker image ls
+```bash
+# docker image ls
 REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
 python-hello         latest              fe7904949703        3 minutes ago       943MB
 python               3.8                 a8bf31794b92        17 hours ago        934MB
@@ -627,8 +628,8 @@ Now that you have built the image, you can run it to see that it works.
 
 1. Run the Docker image
 
-    ```sh
-    $ docker run -p 5001:5000 -d python-hello
+    ```bash
+    # docker run -p 5001:5000 -d python-hello
     a9b922c25c86cf091da5fceea840be879294994b0bcc67ce28cc799890b7e8ff
     ```
 
@@ -646,8 +647,8 @@ Now that you have built the image, you can run it to see that it works.
 
     If you want to see logs from your application you can use the `docker container logs` command. By default, `docker container logs` prints out what is sent to standard out by your application. Use `docker container ls` to find the id for your running container.
 
-    ```sh
-    $ docker container logs [container id]
+    ```bash
+    # docker container logs [container id]
     * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
     172.17.0.1 - - [28/Jun/2017 19:35:33] "GET / HTTP/1.1" 200 -
     ```
@@ -664,8 +665,8 @@ Go ahead and log in to make sure you are authenticated against the back end that
 
 1. Login
 
-    ```sh
-    $ ibmcloud login --sso 
+    ```bash
+    # ibmcloud login --sso 
     Punto final de API: https://cloud.ibm.com
     Región: us-south
     
@@ -680,8 +681,8 @@ Go ahead and log in to make sure you are authenticated against the back end that
 
     Now let’s create a container registry name-space. You need to take a moment and think of something globally unique that is descriptive enough to tell you what it is. It is imperative that you do not put personal information in your container images, namespace names, description fields (for example, in registry tokens), or in any image configuration data (for example, image names or image labels).
     
-    ```sh
-    $ ibmcloud cr namespace-add [ibmcloud registry username]
+    ```bash
+    # ibmcloud cr namespace-add [ibmcloud registry username]
     Adding namespace '[ibmcloud registry username]'...
     Successfully added namespace '[ibmcloud registry username]'
     
@@ -697,7 +698,7 @@ This command builds the container, tags it with the name of python-hello and the
 Note: Don’t forget the . at the end, or wherever you have your Dockerfile – that’s how the build command knows where to run this.
 
 ```bash
-$ ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:1 .
+# ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:1 .
 Sending build context to Docker daemon  3.072kB
 Step 1/4 : FROM python:3.8
  ---> a8bf31794b92
@@ -762,8 +763,8 @@ The "hola Kuberneteadores!" application is overrated, let's update the app so th
 
     First rebuild, this time use your IBM Cloud registry username in the build command:
 
-  ```sh 
-$ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:2 .
+  ```bash
+# ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:2 .
 Sending build context to Docker daemon  3.072kB
 Step 1/4 : FROM python:3.8
  ---> a8bf31794b92
@@ -801,8 +802,8 @@ When you change a layer, every layer built on top of that will have to be rebuil
 
 We will use now '5002' as port to see the changes.
 
-```sh 
-$docker run -p 5002:5000 -d registry.ng.bluemix.net/lureyit/python-hello:2
+```bash
+# docker run -p 5002:5000 -d registry.ng.bluemix.net/lureyit/python-hello:2
 Unable to find image 'registry.ng.bluemix.net/lureyit/python-hello:2' locally
 2: Pulling from lureyit/python-hello
 be2ea06d55bb: Already exists 
