@@ -402,6 +402,9 @@ Notice that all the layers in the image have been gone.
 ***Note:*** Docker images and containers can be referenced by **name** or by **id**. 
 
 
+![img](images/Dockerlab-1.png)
+
+
 ## 2. Task 2 - Running a web server
 
 
@@ -650,6 +653,8 @@ Now that you have built the image, you can run it to see that it works.
     ```
 
     The Dockerfile is how you create reproducible builds for your application. A common workflow is to have your CI/CD automation run `docker image build` as part of its build process. Once images are built, they will be sent to a central registry, where it can be accessed by all environments (such as a test environment) that need to run instances of that application. In the next step, we will push our custom image to the public docker registry: the docker hub, where it can be consumed by other developers and operators.
+    
+   
 
 ### Step 4: Push to a ibmcloud registry
 
@@ -691,7 +696,8 @@ This command builds the container, tags it with the name of python-hello and the
 
 Note: Don’t forget the . at the end, or wherever you have your Dockerfile – that’s how the build command knows where to run this.
 
-```$ ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:1 .
+```bash
+$ ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:1 .
 Sending build context to Docker daemon  3.072kB
 Step 1/4 : FROM python:3.8
  ---> a8bf31794b92
@@ -727,6 +733,8 @@ Wow! We now have a container that’s pushed to the IBM Container Registry that 
 Let’s verify that it’s pushed by running the following command to list out your containers. Go to https://cloud.ibm.com/kubernetes/registry/main/images
 
 
+ ![img](images/Dockerlab-2.png)
+
 ## Step 5: Deploying a Change
 
 The "hola Kuberneteadores!" application is overrated, let's update the app so that it says "hola Kuberneteadores de la sesion 2!" instead.
@@ -754,7 +762,8 @@ The "hola Kuberneteadores!" application is overrated, let's update the app so th
 
     First rebuild, this time use your IBM Cloud registry username in the build command:
 
-  ```sh $ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:2 .
+  ```sh 
+$ibmcloud cr build --tag registry.ng.bluemix.net/lureyit/python-hello:2 .
 Sending build context to Docker daemon  3.072kB
 Step 1/4 : FROM python:3.8
  ---> a8bf31794b92
@@ -792,7 +801,8 @@ When you change a layer, every layer built on top of that will have to be rebuil
 
 We will use now '5002' as port to see the changes.
 
-```sh $docker run -p 5002:5000 -d registry.ng.bluemix.net/lureyit/python-hello:2
+```sh 
+$docker run -p 5002:5000 -d registry.ng.bluemix.net/lureyit/python-hello:2
 Unable to find image 'registry.ng.bluemix.net/lureyit/python-hello:2' locally
 2: Pulling from lureyit/python-hello
 be2ea06d55bb: Already exists 
@@ -815,6 +825,8 @@ Navigate to [localhost:5002](http://localhost:5002) in a browser to see the resu
 In play-with-docker, click the link `5002` that should appear near the top of your session. If all else fails: `curl localhost:5002` works...
 
 You should see "hola Kuberneteadores de la sesion 2!" on your browser.
+    
+![img](images/Dockerlab-3.png) 
     
 
 ## Step 6: Understanding Image Layers
